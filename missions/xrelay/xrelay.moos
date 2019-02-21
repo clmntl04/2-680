@@ -1,0 +1,64 @@
+// MOOS file
+
+ServerHost = localhost
+ServerPort = 9000
+
+//------------------------------------------
+// Antler configuration  block
+ProcessConfig = ANTLER
+{
+  MSBetweenLaunches = 200
+
+  Run = MOOSDB       @ NewConsole = false
+  Run = pXRelayTest  @ NewConsole = true ~ pXRelay_APPLES
+  Run = pXRelayTest  @ NewConsole = true ~ pXRelay_PEARS
+  Run = uXMS         @ NewConsole = true
+  Run - uTimerScript @ NewConsole = false
+}
+
+
+//------------------------------------------
+// First pXRelay configuration block
+
+ProcessConfig = pXRelay_APPLES
+{
+   AppTick   = 4
+   CommsTick = 4
+ 
+   OUTGOING_VAR = APPLES
+   INCOMING_VAR = PEARS
+}
+
+//------------------------------------------
+// Second pXRelay configuration block
+
+ProcessConfig = pXRelay_PEARS
+{
+   AppTick   = 4
+   CommsTick = 4
+ 
+   OUTGOING_VAR = PEARS
+   INCOMING_VAR = APPLES
+}
+
+//------------------------------------------
+// uXMS configuration block
+
+ProcessConfig = uXMS
+{
+   AppTick   = 4
+   CommsTick = 4
+ 
+   VAR = PEARS,  PEARS_ITER_HZ,  PEARS_POST_HZ
+   VAR = APPLES, APPLES_ITER_HZ, APPLES_POST_HZ
+}
+
+ProcessConfig = uTimerStart
+{
+  AppTick   = 4
+  Commstick = 4
+
+  event  = var=PEARS, val=1,  time=5
+
+}
+
